@@ -1,0 +1,83 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Ball : MonoBehaviour
+{
+    public static bool ballHitGroundExist = false;
+    public bool isShooted = false;
+    Rigidbody2D rb;
+    Vector2 curVelocity;
+    Collider2D collider;
+    // Start is called before the first frame update
+    void Start()
+    {
+        collider = GetComponent<Collider2D>();
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        //Debug.Log(rb.velocity);
+    }
+    private void FixedUpdate()
+    {
+        curVelocity = rb.velocity;
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        {
+            if (collision.transform.CompareTag("Border") || collision.transform.CompareTag("Block"))
+            {
+                //// 여러 접촉점이 있으면 법선을 평균내서 모서리 충돌 안정화
+                //Vector2 avgNormal = Vector2.zero;
+                //Vector2 reflect = Vector2.zero;
+                //foreach (var contact in collision.contacts)
+                //{
+                //    avgNormal += contact.normal;
+                //}
+                //avgNormal.Normalize();
+
+                //// avgNormal이 너무 비스듬하면, X/Y 중 큰 축으로 정렬 (모서리 안정화)
+                //if (Mathf.Abs(avgNormal.x) > Mathf.Abs(avgNormal.y))
+                //    avgNormal = new Vector2(Mathf.Sign(avgNormal.x), 0);
+                //else
+                //    avgNormal = new Vector2(0, Mathf.Sign(avgNormal.y));
+                //reflect = Vector2.Reflect(curVelocity, avgNormal).normalized;
+                ////Debug.Log(reflect);;
+
+                //ContactPoint2D cp = collision.contacts[0];
+                //float radius = ((CircleCollider2D)collider).radius * transform.localScale.x;
+                //Vector2 safePos = cp.point + avgNormal * radius;
+
+                //transform.position = safePos;
+                ////rb.velocity = reflect * GameManager.Instance.ballSpeed;
+            }
+            else if (collision.transform.CompareTag("Bottom") && isShooted)
+            {
+                transform.position = new Vector3(transform.position.x, GameManager.Instance.ballPosition.position.y, 0);
+                isShooted = false;
+                rb.velocity = Vector2.zero;
+                if (!ballHitGroundExist)
+                {
+                    ballHitGroundExist = true;
+                    GameManager.Instance.ballPosition.position = transform.position;
+                }
+                else
+                {
+                    StartCoroutine(MoveForBallPosition());
+                }
+            }
+        }
+    }
+    IEnumerator MoveForBallPosition()
+    {
+        while(!(transform.position.x <= GameManager.Instance.ballPosition.position.x + 0.55f && transform.position.x >= GameManager.Instance.ballPosition.position.x - 0.55f))
+        {
+            transform.position += (GameManager.Instance.ballPosition.position - transform.position).normalized * 1f;
+            yield return new WaitForSeconds(0.02f);
+        }
+        transform.position = GameManager.Instance.ballPosition.position;
+    }
+}

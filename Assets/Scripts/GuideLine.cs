@@ -20,11 +20,11 @@ public class GuideLine : MonoBehaviour
     }
     void ShowLineRenderer()
     {
-        RaycastHit2D hit2D = Physics2D.CircleCast(transform.position, 0.5f, transform.up,Mathf.Infinity,  (1 << 6)|(1 << 7));
+        RaycastHit2D hit2D = Physics2D.CircleCast(transform.position, 0.375f, transform.up,Mathf.Infinity,  (1 << 6)|(1 << 7));
         if(hit2D.collider != null && !hit2D.transform.CompareTag("Bottom"))
         {
             lineRenderer.SetPosition(0, transform.position);
-            lineRenderer.SetPosition(1, transform.position + transform.up * 20);
+            lineRenderer.SetPosition(1, transform.position + transform.up * 15);
             //Debug.Log(hit2D.transform.gameObject.name);
             previewObj.transform.position = transform.position + transform.up * hit2D.distance;
         }

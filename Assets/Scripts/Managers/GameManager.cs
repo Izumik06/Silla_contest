@@ -79,7 +79,8 @@ public class GameManager : MonoBehaviour
     void GameOver()
     {
         isStartGame = false;
-        while(balls.Count > 0)
+        PlayerPrefs.SetInt("highScore", highScore);
+        while (balls.Count > 0)
         {
             Destroy(balls[0].gameObject);
             balls.RemoveAt(0);

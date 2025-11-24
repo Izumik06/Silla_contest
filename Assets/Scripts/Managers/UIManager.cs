@@ -23,9 +23,12 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject startBtn;
     [SerializeField] GameObject pauseBtn;
 
+    [SerializeField] GameObject fadeOut;
+
     [SerializeField] GameObject gameOverUI;
     [SerializeField] TextMeshProUGUI gameOverHighScore;
     [SerializeField] TextMeshProUGUI gameOverScore;
+
     //Start is called before the first frame update
     void Awake()
     {
@@ -63,11 +66,15 @@ public class UIManager : MonoBehaviour
         pauseBtn.SetActive(true);
         GameManager.Instance.isStartGame = true;
         Invoke("isPauseDisable", 0.05f);
-        Time.timeScale = 1.0f;
         GameManager.Instance.Next();
     }
     public void MainBtn()
     {
+        fadeOut.SetActive(true);
+    }
+    public void ReloadMain()
+    {
+        Time.timeScale = 1.0f;
         SceneManager.LoadScene(0);
     }
     public void VolumeSlider()

@@ -8,6 +8,7 @@ TagManager:
   - Block
   - Bottom
   - Ball
+  - Item
   layers:
   - Default
   - TransparentFX
@@ -18,8 +19,8 @@ TagManager:
   - Border
   - Block
   - Ball
-  - 
-  - 
+  - Item
+  - InactivatedBall
   - 
   - 
   - 

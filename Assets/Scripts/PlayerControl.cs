@@ -29,6 +29,7 @@ public class PlayerControl : MonoBehaviour
         if (Camera.main.ScreenToWorldPoint(Input.mousePosition).y > 12f) { return; }
         if (!GameManager.Instance.CanShoot) { return; }
 
+        GameManager.Instance.ActivateBalls();
         canShoot = false;
         StartCoroutine(_ShootBalls());
 
@@ -38,9 +39,10 @@ public class PlayerControl : MonoBehaviour
         Ball.ballHitGroundExist = false;
         for (int i = 0; i < GameManager.Instance.balls.Count; i++)
         {
-            GameObject ball = GameManager.Instance.balls[i];
-            ball.GetComponent<Rigidbody2D>().velocity = guideLine.up * GameManager.Instance.ballSpeed;
-            ball.GetComponent<Ball>().isShooted = true;
+            Ball ball = GameManager.Instance.balls[i];
+            ball.gameObject.GetComponent<Rigidbody2D>().velocity = guideLine.up * GameManager.Instance.ballSpeed;
+            ball.Activate();
+            ball.isShooted = true;
             yield return new WaitForSeconds(ballDelay);
         }
         
@@ -51,7 +53,6 @@ public class PlayerControl : MonoBehaviour
         if (!Input.GetMouseButton(0)) { return; }
         if (Camera.main.ScreenToWorldPoint(Input.mousePosition).y < -12f) { return; }
         guideLine.gameObject.SetActive(true);
-
         //Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         //mousePos.z = 0;
 
@@ -68,10 +69,8 @@ public class PlayerControl : MonoBehaviour
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
 
-        // 가이드라인의 기준 방향(예: 위쪽)
         Vector2 dir = (mousePos - guideLine.position).normalized;
 
-        // 현재 마우스가 만드는 각도(라디안 → 도)
         float targetAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
 
         if (targetAngle > 180f)
@@ -79,10 +78,8 @@ public class PlayerControl : MonoBehaviour
         else if (targetAngle < -180f)
             targetAngle += 360f;
 
-        // -angle ~ +angle 범위로 제한
         float clampedAngle = Mathf.Clamp(targetAngle, -85, 85);
 
-        // 최종 회전 적용
         guideLine.rotation = Quaternion.Euler(0, 0, clampedAngle);
     }
 }

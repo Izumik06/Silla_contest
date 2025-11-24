@@ -6,7 +6,8 @@ using UnityEngine;
 public class Block : MonoBehaviour
 {
     SpriteRenderer spriteRenderer;
-    
+
+    public int level = 0;
     public int hp;
     [SerializeField] TextMeshPro hpText;
     // Start is called before the first frame update
@@ -22,6 +23,21 @@ public class Block : MonoBehaviour
     {
         
     }
+    public void Move()
+    {
+        StartCoroutine(_Move());
+    }
+    IEnumerator _Move()
+    {
+        int frame = 10;
+        for(int i = 0; i < frame; i++)
+        {
+            transform.position += Vector3.down * (2f / frame);
+            yield return new WaitForSeconds(0.1f / frame);
+        }
+        level++;
+        transform.position = new Vector3(transform.position.x, Mathf.Round(transform.position.y), 0);
+    }
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ball"))
@@ -29,6 +45,7 @@ public class Block : MonoBehaviour
             hp -= 1;
             if (hp <= 0)
             {
+                GameManager.Instance.blocks.Remove(this);
                 Destroy(gameObject);
             }
             else

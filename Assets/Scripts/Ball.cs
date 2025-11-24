@@ -6,13 +6,13 @@ public class Ball : MonoBehaviour
 {
     public static bool ballHitGroundExist = false;
     public bool isShooted = false;
+    public bool isActivated;
+    [SerializeField] Color activatedColor;
     Rigidbody2D rb;
-    Vector2 curVelocity;
-    Collider2D collider;
+    
     // Start is called before the first frame update
     void Start()
     {
-        collider = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -20,10 +20,6 @@ public class Ball : MonoBehaviour
     void Update()
     {
         //Debug.Log(rb.velocity);
-    }
-    private void FixedUpdate()
-    {
-        curVelocity = rb.velocity;
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -59,19 +55,47 @@ public class Ball : MonoBehaviour
                 transform.position = new Vector3(transform.position.x, GameManager.Instance.ballPosition.position.y, 0);
                 isShooted = false;
                 rb.velocity = Vector2.zero;
-                if (!ballHitGroundExist)
+                if (isActivated)
                 {
-                    ballHitGroundExist = true;
-                    GameManager.Instance.ballPosition.position = transform.position;
+                    if (!ballHitGroundExist)
+                    {
+                        ballHitGroundExist = true;
+                        GameManager.Instance.ballPosition.position = transform.position;
+                    }
+                    else
+                    {
+                        MoveForBallPosition();
+                    }
+
+                    if (GameManager.Instance.CanShoot)
+                    {
+                        GameManager.Instance.Next();
+                    }
                 }
                 else
                 {
-                    StartCoroutine(MoveForBallPosition());
+                    rb.gravityScale = 0;
                 }
             }
         }
     }
-    IEnumerator MoveForBallPosition()
+    public void Activate()
+    {
+        GetComponent<SpriteRenderer>().color = activatedColor;
+        GameManager.Instance.inactivatedBalls.Remove(this);
+        //GameManager.Instance.balls.Add(this);
+        Debug.Log(1);
+        transform.GetChild(0).gameObject.SetActive(true);
+        isShooted = false;
+        isActivated = true;
+        gameObject.layer = 8;
+        transform.name = "ball";
+    }
+    public void MoveForBallPosition()
+    {
+        StartCoroutine(_MoveForBallPosition());
+    }
+    IEnumerator _MoveForBallPosition()
     {
         while(!(transform.position.x <= GameManager.Instance.ballPosition.position.x + 0.55f && transform.position.x >= GameManager.Instance.ballPosition.position.x - 0.55f))
         {

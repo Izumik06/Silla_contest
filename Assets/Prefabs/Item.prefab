@@ -127,6 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inactivatedBallPrefab: {fileID: 3247121004792856660, guid: e853cc4893dd1414eaba0a031d7e9c86, type: 3}
+  particlePrefab: {fileID: 1835568418821822582, guid: 6d1e768d10f45f24d913e39c71ce05c5, type: 3}
 --- !u!1 &5357493151128478101
 GameObject:
   m_ObjectHideFlags: 0

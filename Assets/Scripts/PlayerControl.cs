@@ -5,7 +5,6 @@ using static UnityEngine.GraphicsBuffer;
 
 public class PlayerControl : MonoBehaviour
 {
-    [SerializeField] GameObject ballPrefab;
     [SerializeField] Transform guideLine;
     [SerializeField] Transform ballPosition;
     [SerializeField] float angle;
@@ -25,11 +24,13 @@ public class PlayerControl : MonoBehaviour
     }
     void ShootBalls()
     {
+        if (!GameManager.Instance.isStartGame) { return; }
         if (!Input.GetMouseButtonUp(0)) { return; }
-        if (Camera.main.ScreenToWorldPoint(Input.mousePosition).y > 12f) { return; }
+        if (Camera.main.ScreenToWorldPoint(Input.mousePosition).y > 9f) { return; }
         if (!GameManager.Instance.CanShoot) { return; }
-
+        if (GameManager.Instance.isPause) { return; }
         GameManager.Instance.ActivateBalls();
+        UIManager.Instance.DisableBallCountUI();
         canShoot = false;
         StartCoroutine(_ShootBalls());
 
@@ -41,7 +42,6 @@ public class PlayerControl : MonoBehaviour
         {
             Ball ball = GameManager.Instance.balls[i];
             ball.gameObject.GetComponent<Rigidbody2D>().velocity = guideLine.up * GameManager.Instance.ballSpeed;
-            ball.Activate();
             ball.isShooted = true;
             yield return new WaitForSeconds(ballDelay);
         }
@@ -49,23 +49,13 @@ public class PlayerControl : MonoBehaviour
     }
     void SetGuideLine()
     {
+        if (!GameManager.Instance.isStartGame) { return; }
         if (!GameManager.Instance.CanShoot) { return; }
         if (!Input.GetMouseButton(0)) { return; }
         if (Camera.main.ScreenToWorldPoint(Input.mousePosition).y < -12f) { return; }
-        guideLine.gameObject.SetActive(true);
-        //Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        //mousePos.z = 0;
+        if (Camera.main.ScreenToWorldPoint(Input.mousePosition).y > 9f) { return; }
+        if (GameManager.Instance.isPause) { return; }
 
-        //guideLine.up = (mousePos - guideLine.position).normalized;
-
-        //if (guideLine.eulerAngles.z > angle && guideLine.eulerAngles.z < 180f)
-        //{
-        //    guideLine.eulerAngles = new Vector3(0, 0, 80);
-        //}
-        //else if (guideLine.eulerAngles.z < 360 - angle && guideLine.eulerAngles.z > 180)
-        //{
-        //    guideLine.eulerAngles = new Vector3(0, 0, -80);
-        //}
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
 
@@ -78,8 +68,9 @@ public class PlayerControl : MonoBehaviour
         else if (targetAngle < -180f)
             targetAngle += 360f;
 
-        float clampedAngle = Mathf.Clamp(targetAngle, -85, 85);
+        float clampedAngle = Mathf.Clamp(targetAngle, -80, 80);
 
         guideLine.rotation = Quaternion.Euler(0, 0, clampedAngle);
+        guideLine.gameObject.SetActive(true);
     }
 }

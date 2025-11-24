@@ -9,11 +9,17 @@ public class Block : MonoBehaviour
 
     public int level = 0;
     public int hp;
+
+    [SerializeField] GameObject particlePrefab;
     [SerializeField] TextMeshPro hpText;
     // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
+    }
+    void Start()
+    {
+
         SetStatus();
 
     }
@@ -29,13 +35,13 @@ public class Block : MonoBehaviour
     }
     IEnumerator _Move()
     {
+        level++;
         int frame = 10;
         for(int i = 0; i < frame; i++)
         {
             transform.position += Vector3.down * (2f / frame);
             yield return new WaitForSeconds(0.1f / frame);
         }
-        level++;
         transform.position = new Vector3(transform.position.x, Mathf.Round(transform.position.y), 0);
     }
     private void OnCollisionEnter2D(Collision2D collision)
@@ -46,6 +52,10 @@ public class Block : MonoBehaviour
             if (hp <= 0)
             {
                 GameManager.Instance.blocks.Remove(this);
+
+                GameObject particle = Instantiate(particlePrefab);
+                particle.transform.position = transform.position;
+
                 Destroy(gameObject);
             }
             else

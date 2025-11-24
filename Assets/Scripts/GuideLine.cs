@@ -10,6 +10,7 @@ public class GuideLine : MonoBehaviour
     void Start()
     {
         lineRenderer = GetComponent<LineRenderer>();
+        ShowLineRenderer();
     }
 
     // Update is called once per frame
@@ -20,9 +21,18 @@ public class GuideLine : MonoBehaviour
     }
     void ShowLineRenderer()
     {
+        if (!SettingManager.Instance.useGuideLine)
+        { 
+            lineRenderer.enabled = false;
+            previewObj.SetActive(false);
+            return;
+        }
+        lineRenderer.enabled = true;
+        previewObj.SetActive(true);
         RaycastHit2D hit2D = Physics2D.CircleCast(transform.position, 0.375f, transform.up,Mathf.Infinity,  (1 << 6)|(1 << 7));
         if(hit2D.collider != null && !hit2D.transform.CompareTag("Bottom"))
         {
+            if(SettingManager.Instance.useGuideLine)
             lineRenderer.SetPosition(0, transform.position);
             lineRenderer.SetPosition(1, transform.position + transform.up * 12.5f);
             //Debug.Log(hit2D.transform.gameObject.name);

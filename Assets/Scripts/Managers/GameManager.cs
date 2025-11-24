@@ -17,18 +17,21 @@ public class GameManager : MonoBehaviour
     public Transform itemParent;
     [SerializeField] GameObject BlockPrefab;
     [SerializeField] GameObject itemPrefab;
+    [SerializeField] GameObject ballParticlePrefab;
     public int ballSpeed;
     public int maxHp;
     public int score;
+    public int highScore;
+    public bool isPause;
+    public bool isStartGame;
 
-    public float[] probability = { 0.5f, 0.5f, 0, 0 };
+    float[] probability = { 0.5f, 0.5f, 0, 0 };
 
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -38,31 +41,52 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Next();
+        if (PlayerPrefs.HasKey("highScore"))
+        {
+            highScore = PlayerPrefs.GetInt("highScore");
+        }
+        else
+        {
+            highScore = 0;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            
-        }
+
     }
     public void Next()
     {
+        score++;
+        if(score >= highScore)
+        {
+            highScore = score;
+        }
         maxHp++;
         CreateObjects();
         MoveObjects();
         MoveInactivatedBalls();
-        if(blocks.Find(_ => _.level >= 9) != null)
+        SetBlockColors();
+        UIManager.Instance.SetScoreUI();
+        if (blocks.Find(_ => _.level >= 8) != null)
         {
             GameOver();
+            return;
         }
+        UIManager.Instance.SetBallCountUI();
     }
     void GameOver()
     {
-        Debug.Log("끗");
+        isStartGame = false;
+        while(balls.Count > 0)
+        {
+            Destroy(balls[0].gameObject);
+            balls.RemoveAt(0);
+        }
+        GameObject particle = Instantiate(ballParticlePrefab);
+        particle.transform.position = ballPosition.position;
+        UIManager.Instance.SetGameOverUI();
     }
     int GetProbability()
     {
@@ -79,6 +103,13 @@ public class GameManager : MonoBehaviour
             }
         }
         return -1;
+    }
+    public void SetBlockColors()
+    {
+        for(int i = 0; i < blocks.Count; i++)
+        {
+            blocks[i].SetStatus();
+        }
     }
     public void CreateObjects()
     {
@@ -117,19 +148,21 @@ public class GameManager : MonoBehaviour
     }
     void MoveInactivatedBalls()
     {
-        List<Ball> inactivatedballs = balls.FindAll(_ => !_.isActivated).ToList();
-        for(int i = 0; i < inactivatedballs.Count; i++)
+        for(int i = 0; i < inactivatedBalls.Count; i++)
         {
-            inactivatedballs[i].GetComponent<Ball>().MoveForBallPosition();   
+            inactivatedBalls[i].GetComponent<Ball>().MoveForBallPosition();   
         }
     }
     public void ActivateBalls()
     {
-        List<Ball> inactivatedballs = balls.FindAll(_ => !_.isActivated).ToList();
-        for (int i = 0; i < inactivatedballs.Count; i++)
+        while (inactivatedBalls.Count > 0)
         {
-            inactivatedballs[i].GetComponent<Ball>().Activate();
+            inactivatedBalls[0].Activate();
         }
+    }
+    private void OnApplicationQuit()
+    {
+        PlayerPrefs.SetInt("highScore", highScore);
     }
     public bool CanShoot
     {

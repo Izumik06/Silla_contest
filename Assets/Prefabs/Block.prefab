@@ -400,5 +400,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 005ec15347fbf334db4b248c99c636a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  level: 0
   hp: 15
+  particlePrefab: {fileID: 7383012341190492939, guid: 50e4a4e6be125724381717c31675c942, type: 3}
   hpText: {fileID: 4325147414854391341}

@@ -19,7 +19,21 @@ public class Ball : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log(rb.velocity);
+        //속도보정
+        if(isShooted && isActivated && GameManager.Instance.isStartGame)
+        {
+            if (Mathf.Abs(rb.velocity.y) < 5f)
+            {
+                if (rb.velocity.y != 0)
+                {
+                    rb.velocity = new Vector2(rb.velocity.x, Mathf.Sign(rb.velocity.y) * 5f);
+                }
+                else
+                {
+                    rb.velocity = new Vector2(rb.velocity.x, 5f);
+                }
+            }
+        }
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -72,10 +86,6 @@ public class Ball : MonoBehaviour
                         GameManager.Instance.Next();
                     }
                 }
-                else
-                {
-                    rb.gravityScale = 0;
-                }
             }
         }
     }
@@ -83,8 +93,7 @@ public class Ball : MonoBehaviour
     {
         GetComponent<SpriteRenderer>().color = activatedColor;
         GameManager.Instance.inactivatedBalls.Remove(this);
-        //GameManager.Instance.balls.Add(this);
-        Debug.Log(1);
+        GameManager.Instance.balls.Add(this);
         transform.GetChild(0).gameObject.SetActive(true);
         isShooted = false;
         isActivated = true;

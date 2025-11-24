@@ -6,6 +6,7 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     [SerializeField] GameObject inactivatedBallPrefab;
+    [SerializeField] GameObject particlePrefab;
     // Start is called before the first frame update
     void Start()
     {
@@ -39,8 +40,12 @@ public class Item : MonoBehaviour
             GameManager.Instance.inactivatedBalls.Add(ball.GetOrAddComponent<Ball>());
             ball.transform.parent = GameManager.Instance.ballParent;
             ball.transform.position = transform.position;
-
+            ball.GetComponent<Rigidbody2D>().AddForce(Vector2.down * GameManager.Instance.ballSpeed, ForceMode2D.Impulse);
             GameManager.Instance.items.Remove(this);
+
+            GameObject particle = Instantiate(particlePrefab);
+            particle.transform.position = transform.position;
+
             Destroy(gameObject);
         }
     }

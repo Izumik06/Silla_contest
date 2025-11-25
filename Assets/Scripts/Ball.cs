@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-    public static bool ballHitGroundExist = false;
-    public bool isShooted = false;
+    public static bool ballHitGroundExist = false; // 이미 땅에 닿은 공이 있는지 확인하는 변수
+
+    public bool isShooted = false; 
     public bool isActivated;
     [SerializeField] Color activatedColor;
     Rigidbody2D rb;
@@ -19,7 +20,7 @@ public class Ball : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //속도보정
+        //상하 운동이 너무 작거나 없다면 강제로 보정
         if(isShooted && isActivated && GameManager.Instance.isStartGame)
         {
             if (Mathf.Abs(rb.velocity.y) < 5f)
@@ -35,9 +36,11 @@ public class Ball : MonoBehaviour
             }
         }
     }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         {
+            //공이 벽, 블럭에 닿을 시 튕기는 코드
             if (collision.transform.CompareTag("Border") || collision.transform.CompareTag("Block"))
             {
                 //// 여러 접촉점이 있으면 법선을 평균내서 모서리 충돌 안정화
@@ -64,31 +67,37 @@ public class Ball : MonoBehaviour
                 //transform.position = safePos;
                 ////rb.velocity = reflect * GameManager.Instance.ballSpeed;
             }
-            else if (collision.transform.CompareTag("Bottom") && isShooted)
+            else if (collision.transform.CompareTag("Bottom") && isShooted) //발사된 공이 땅에 닿았을 때 실행
             {
+                //정지 및 위치값 보정
                 transform.position = new Vector3(transform.position.x, GameManager.Instance.ballPosition.position.y, 0);
                 isShooted = false;
                 rb.velocity = Vector2.zero;
-                if (isActivated)
+
+                if (isActivated) //공이 아이템 상태가 아닌 활성화 된 상태
                 {
-                    if (!ballHitGroundExist)
+                    if (!ballHitGroundExist) //최초로 땅에 떨어진 공이면 실행
                     {
                         ballHitGroundExist = true;
-                        GameManager.Instance.ballPosition.position = transform.position;
+                        GameManager.Instance.ballPosition.position = transform.position; //다음 공 발사 지점을 자신의 위치로 이동
                     }
                     else
                     {
-                        MoveForBallPosition();
+                        MoveForBallPosition(); // 다음 발사 위치로 이동
                     }
 
-                    if (GameManager.Instance.CanShoot)
-                    {
+                    if (GameManager.Instance.CanShoot) //자신이 땅에 떨어진 것으로 다음 발사 가능 == 마지막 공임
+                    { 
                         GameManager.Instance.Next();
                     }
                 }
             }
         }
     }
+
+    /// <summary>
+    /// 아이템을 통해 생성된 상태에서 발사 가능한 상태로 활성화
+    /// </summary>
     public void Activate()
     {
         GetComponent<SpriteRenderer>().color = activatedColor;
@@ -100,10 +109,19 @@ public class Ball : MonoBehaviour
         gameObject.layer = 8;
         transform.name = "ball";
     }
+
+    /// <summary>
+    /// 다음 발사 위치로 이동
+    /// </summary>
     public void MoveForBallPosition()
     {
         StartCoroutine(_MoveForBallPosition());
     }
+
+    /// <summary>
+    /// 실질적인 이동 함수
+    /// </summary>
+    /// <returns></returns>
     IEnumerator _MoveForBallPosition()
     {
         while(!(transform.position.x <= GameManager.Instance.ballPosition.position.x + 0.55f && transform.position.x >= GameManager.Instance.ballPosition.position.x - 0.55f))

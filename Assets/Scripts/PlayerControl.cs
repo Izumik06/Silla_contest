@@ -1,27 +1,22 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class PlayerControl : MonoBehaviour
 {
-    [SerializeField] Transform guideLine;
-    [SerializeField] Transform ballPosition;
-    [SerializeField] float angle;
-    [SerializeField] float ballDelay;
-    public bool canShoot;
-    // Start is called before the first frame update
-    void Start()
-    {
+    [SerializeField] Transform guideLine; //가이드라인 오브젝트
+    [SerializeField] Transform ballPosition; //공 위치
+    [SerializeField] float angle; //최대, 최소 각도
+    [SerializeField] float ballDelay; //공 발사 간격
 
-    }
-
-    // Update is called once per frame
     void Update()
     {
         SetGuideLine();
         ShootBalls();
     }
+
+    /// <summary>
+    /// 공 발사
+    /// </summary>
     void ShootBalls()
     {
         if (!GameManager.Instance.isStartGame) { return; }
@@ -29,12 +24,16 @@ public class PlayerControl : MonoBehaviour
         if (Camera.main.ScreenToWorldPoint(Input.mousePosition).y > 9f) { return; }
         if (!GameManager.Instance.CanShoot) { return; }
         if (GameManager.Instance.isPause) { return; }
+
         GameManager.Instance.ActivateBalls();
         UIManager.Instance.DisableBallCountUI();
-        canShoot = false;
         StartCoroutine(_ShootBalls());
-
     }
+
+    /// <summary>
+    /// 직접적인 공 발사 구현
+    /// </summary>
+    /// <returns></returns>
     IEnumerator _ShootBalls()
     {
         Ball.ballHitGroundExist = false;
@@ -45,8 +44,11 @@ public class PlayerControl : MonoBehaviour
             ball.isShooted = true;
             yield return new WaitForSeconds(ballDelay);
         }
-        
     }
+
+    /// <summary>
+    /// 발사 각도, 공 도착 지점 표시
+    /// </summary>
     void SetGuideLine()
     {
         if (!GameManager.Instance.isStartGame) { return; }
@@ -56,20 +58,25 @@ public class PlayerControl : MonoBehaviour
         if (Camera.main.ScreenToWorldPoint(Input.mousePosition).y > 9f) { return; }
         if (GameManager.Instance.isPause) { return; }
 
+        //마우스 위치 가져오기
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
 
         Vector2 dir = (mousePos - guideLine.position).normalized;
 
+        //벡터를 각도로 변환
         float targetAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
 
+        //각도를 -180 ~ 180까지의 값으로 표기
         if (targetAngle > 180f)
             targetAngle -= 360f;
         else if (targetAngle < -180f)
             targetAngle += 360f;
 
-        float clampedAngle = Mathf.Clamp(targetAngle, -80, 80);
+        //각도를 -80 ~ 80사이의 값으로 변경
+        float clampedAngle = Mathf.Clamp(targetAngle, -angle, angle);
 
+        //각도 변경
         guideLine.rotation = Quaternion.Euler(0, 0, clampedAngle);
         guideLine.gameObject.SetActive(true);
     }

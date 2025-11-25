@@ -37,10 +37,11 @@ public class PlayerControl : MonoBehaviour
     IEnumerator _ShootBalls()
     {
         Ball.ballHitGroundExist = false;
+        float ballSpeed = SettingManager.Instance.ballSpeed; //발사 후 공속도 변경 방지
         for (int i = 0; i < GameManager.Instance.balls.Count; i++)
         {
             Ball ball = GameManager.Instance.balls[i];
-            ball.gameObject.GetComponent<Rigidbody2D>().velocity = guideLine.up * GameManager.Instance.ballSpeed;
+            ball.gameObject.GetComponent<Rigidbody2D>().velocity = guideLine.up * ballSpeed; 
             ball.isShooted = true;
             yield return new WaitForSeconds(ballDelay);
         }

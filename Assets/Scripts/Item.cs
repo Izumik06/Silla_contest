@@ -42,7 +42,7 @@ public class Item : MonoBehaviour
             GameManager.Instance.inactivatedBalls.Add(ball.GetOrAddComponent<Ball>());
             ball.transform.parent = GameManager.Instance.ballParent;
             ball.transform.position = transform.position;
-            ball.GetComponent<Rigidbody2D>().AddForce(Vector2.down * GameManager.Instance.ballSpeed, ForceMode2D.Impulse);
+            ball.GetComponent<Rigidbody2D>().AddForce(Vector2.down * SettingManager.Instance.ballSpeed, ForceMode2D.Impulse);
 
             //파티클 생성
             GameObject particle = Instantiate(particlePrefab);

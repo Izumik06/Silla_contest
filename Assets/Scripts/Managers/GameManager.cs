@@ -20,7 +20,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject BlockPrefab;
     [SerializeField] GameObject itemPrefab;
     [SerializeField] GameObject ballParticlePrefab;
-    public int ballSpeed;
     public int maxHp;
     public int score;
     public int highScore;
@@ -151,7 +150,6 @@ public class GameManager : MonoBehaviour
             beforeProbability += probability[i];
             if (randValue < beforeProbability)
             {
-                Debug.Log(randValue);
                 return i + 1;
             }
         }

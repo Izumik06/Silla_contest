@@ -9,8 +9,6 @@ public class AudioManager : MonoBehaviour
     AudioSource audioSource;
     [SerializeField] List<AudioClip> audioClips = new List<AudioClip>();
 
-    static bool isFirstRun = true;
-
     // Start is called before the first frame update
     private void Awake()
     {
@@ -27,15 +25,7 @@ public class AudioManager : MonoBehaviour
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        ApplyVolumeSetting(); //시작시 볼륨, 음소거 설정
-
-        //게임을 최초 실행한 뒤 딱 한번 소리가 안나오는 버그 존재
-        //최초 실행이라면 미리 소리 실행
-        if (isFirstRun) 
-        {
-            audioSource.Play();
-            isFirstRun = false;
-        }
+        ApplyVolumeSetting();
     }
 
     /// <summary>

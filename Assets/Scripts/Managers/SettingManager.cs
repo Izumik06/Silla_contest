@@ -10,6 +10,7 @@ public class SettingManager : MonoBehaviour
     public bool useGuideLine;
     public bool useVolume;
     public float volume;
+    public float ballSpeed;
 
     private void Awake()
     {
@@ -29,12 +30,27 @@ public class SettingManager : MonoBehaviour
             useGuideLine = System.Convert.ToBoolean(PlayerPrefs.GetInt("useGuideLine"));
             useVolume = System.Convert.ToBoolean(PlayerPrefs.GetInt("useVolume"));
             volume = PlayerPrefs.GetFloat("volume");
+            ballSpeed = PlayerPrefs.GetFloat("ballSpeed");
+        }
+        else
+        {
+            SetDefault();
         }
     }
 
     //게임 종료시 설정값 저장
     private void OnApplicationQuit()
     {
+        SaveSetting();
+    }
+
+    public void SetDefault()
+    {
+        volume = 1;
+        useVolume = true;
+        ballSpeed = 30f;
+        useGuideLine = true;
+
         SaveSetting();
     }
 
@@ -46,6 +62,8 @@ public class SettingManager : MonoBehaviour
         PlayerPrefs.SetInt("useGuideLine", System.Convert.ToInt16(useGuideLine));
         PlayerPrefs.SetInt("useVolume", System.Convert.ToInt16(useVolume));
         PlayerPrefs.SetFloat("volume", volume);
+        PlayerPrefs.SetFloat("ballSpeed", ballSpeed);
+        
     }
 
     //Singleton 패턴

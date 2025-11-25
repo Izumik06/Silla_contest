@@ -16,6 +16,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject SettingUI;
     [SerializeField] Button volumeBtn;
     [SerializeField] Slider volumeSlider;
+    [SerializeField] Slider ballSpeedSlider;
     [SerializeField] Toggle guideLineToggle;
     [SerializeField] Sprite volumeSprite;
     [SerializeField] Sprite mutedVolumeSprite;
@@ -45,11 +46,29 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         //설정, 최고 점수에 따라 UI를 초기화
-        guideLineToggle.isOn = SettingManager.Instance.useGuideLine;
-        volumeSlider.value = SettingManager.Instance.volume;
-        SetVolumeSprite();
+        SetSettingUI();
         SetScoreUI();
         SetBallCountUI();
+    }
+
+    /// <summary>
+    /// SettingManager에 있는 설정에 따라 UI변경
+    /// </summary>
+    void SetSettingUI()
+    {
+        guideLineToggle.SetIsOnWithoutNotify(SettingManager.Instance.useGuideLine);
+        volumeSlider.value = SettingManager.Instance.volume;
+        ballSpeedSlider.value = SettingManager.Instance.ballSpeed;
+        SetVolumeSprite();
+    }
+
+    /// <summary>
+    /// 초기화 버튼 클릭하면 실행
+    /// </summary>
+    public void ResetSettingBtn()
+    {
+        SettingManager.Instance.SetDefault();
+        SetSettingUI();
     }
 
     /// <summary>
@@ -97,6 +116,14 @@ public class UIManager : MonoBehaviour
     {
         SettingManager.Instance.volume = volumeSlider.value;
         AudioManager.Instance.ApplyVolumeSetting();
+    }
+
+    /// <summary>
+    /// 공 속도 조절 슬라이더의 값이 변경되었을 때 실행
+    /// </summary>
+    public void BallSpeedSlider()
+    {
+        SettingManager.Instance.ballSpeed = ballSpeedSlider.value;
     }
 
     /// <summary>

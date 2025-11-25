@@ -81,10 +81,12 @@ public class UIManager : MonoBehaviour
     public void VolumeSlider()
     {
         SettingManager.Instance.volume = volumeSlider.value;
+        SettingManager.Instance.ApplyVolume();
     }
     public void VolumeBtn()
     {
         SettingManager.Instance.useVolume = !SettingManager.Instance.useVolume;
+        SettingManager.Instance.ApplyVolume();
         SetVolumeSprite();
     }
     void SetVolumeSprite()

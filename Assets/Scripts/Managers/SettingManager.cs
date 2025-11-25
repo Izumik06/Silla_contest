@@ -44,6 +44,9 @@ public class SettingManager : MonoBehaviour
         SaveSetting();
     }
 
+    /// <summary>
+    /// 기본값으로 설정을 되돌림
+    /// </summary>
     public void SetDefault()
     {
         volume = 1;

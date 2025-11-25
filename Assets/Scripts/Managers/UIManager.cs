@@ -29,10 +29,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI gameOverHighScore;
     [SerializeField] TextMeshProUGUI gameOverScore;
 
+    AudioSource audioSource;
     //Start is called before the first frame update
     void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
         }
@@ -43,6 +44,7 @@ public class UIManager : MonoBehaviour
     }
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         guideLineToggle.isOn = SettingManager.Instance.useGuideLine;
         volumeSlider.value = SettingManager.Instance.volume;
         SetVolumeSprite();
@@ -52,7 +54,11 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
+    }
+    public void PlayBtnSound()
+    {
+        audioSource.Play();   
     }
     public void SetGameOverUI()
     {
@@ -71,11 +77,6 @@ public class UIManager : MonoBehaviour
     public void MainBtn()
     {
         fadeOut.SetActive(true);
-    }
-    public void ReloadMain()
-    {
-        Time.timeScale = 1.0f;
-        SceneManager.LoadScene(0);
     }
     public void VolumeSlider()
     {
@@ -97,7 +98,10 @@ public class UIManager : MonoBehaviour
     public void CloseBtn()
     {
         Time.timeScale = 1.0f;
-        Invoke("isPauseDisable", 0.05f); //´İ±â ¹öÆ° ´©¸¥°É·Î °ø ¹ß»çµÇ´Â°Å ¹æÁö
+        if (GameManager.Instance.isStartGame)
+        {
+            Invoke("isPauseDisable", 0.05f); //ë‹«ê¸° ë²„íŠ¼ ëˆ„ë¥¸ê±¸ë¡œ ê³µ ë°œì‚¬ë˜ëŠ”ê±° ë°©ì§€
+        }
         PauseUI.SetActive(false);
         SettingUI.SetActive(false);
     }
@@ -133,14 +137,14 @@ public class UIManager : MonoBehaviour
     }
     public void SetScoreUI()
     {
-        highScoreText.text = "ÃÖ°í±â·Ï : " + GameManager.Instance.highScore;
-        scoreText.text = "ÇöÀçÁ¡¼ö : " + GameManager.Instance.score;
+        highScoreText.text = "ìµœê³ ê¸°ë¡ : " + GameManager.Instance.highScore;
+        scoreText.text = "í˜„ì¬ì ìˆ˜ : " + GameManager.Instance.score;
     }
     public static UIManager Instance
     {
         get
         {
-            if(instance == null)
+            if (instance == null)
             {
                 return null;
             }

@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using static Unity.Collections.AllocatorManager;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,6 +29,9 @@ public class GameManager : MonoBehaviour
 
     float[] probability = { 0.5f, 0.5f, 0, 0 };
 
+    AudioSource audioSource;
+    [SerializeField] AudioClip bombSound;
+
     private void Awake()
     {
         if (instance == null)
@@ -41,6 +46,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+
         if (PlayerPrefs.HasKey("highScore"))
         {
             highScore = PlayerPrefs.GetInt("highScore");
@@ -56,6 +63,12 @@ public class GameManager : MonoBehaviour
     {
 
     }
+    public void ReloadMain()
+    {
+        PlayerPrefs.SetInt("highScore", highScore);
+        Time.timeScale = 1.0f;
+        SceneManager.LoadScene(0);
+    }
     public void Next()
     {
         score++;
@@ -64,6 +77,18 @@ public class GameManager : MonoBehaviour
             highScore = score;
         }
         maxHp++;
+        if(score == 5)
+        {
+            probability = new float[4] { 0.25f, 0.5f, 0.25f, 0 };
+        }
+        else if(score == 10)
+        {
+            probability = new float[4] { 0f, 0.5f, 0.25f, 0.25f };
+        }
+        else if(score == 20)
+        {
+            probability = new float[4] { 0f, 0.25f, 0.25f, 0.5f };
+        }
         CreateObjects();
         MoveObjects();
         MoveInactivatedBalls();
@@ -85,6 +110,8 @@ public class GameManager : MonoBehaviour
             Destroy(balls[0].gameObject);
             balls.RemoveAt(0);
         }
+        audioSource.clip = bombSound;
+        audioSource.Play();
         GameObject particle = Instantiate(ballParticlePrefab);
         particle.transform.position = ballPosition.position;
         UIManager.Instance.SetGameOverUI();
@@ -123,17 +150,18 @@ public class GameManager : MonoBehaviour
             Vector2 spawnPos = new Vector2(position[randIdx], 8f);
             position.RemoveAt(randIdx);
 
-            
             GameObject block = Instantiate(BlockPrefab);
             block.GetComponent<Block>().hp = maxHp;
             block.transform.parent = blockParent;
             block.transform.position = spawnPos;
 
             blocks.Add(block.GetComponent<Block>());
+            SettingManager.Instance.audioSources.Add(block.GetComponent<AudioSource>());
         }
         GameObject item = Instantiate(itemPrefab);
         item.transform.position = new Vector2(position[Random.Range(0, position.Count)], 8f);
         item.transform.parent = itemParent;
+        SettingManager.Instance.audioSources.Add(item.GetComponent<AudioSource>());
         items.Add(item.GetComponent<Item>());
     }
     void MoveObjects()
@@ -149,6 +177,8 @@ public class GameManager : MonoBehaviour
     }
     void MoveInactivatedBalls()
     {
+        if(inactivatedBalls.Count == 0) { return; }
+        audioSource.Play();
         for(int i = 0; i < inactivatedBalls.Count; i++)
         {
             inactivatedBalls[i].GetComponent<Ball>().MoveForBallPosition();   

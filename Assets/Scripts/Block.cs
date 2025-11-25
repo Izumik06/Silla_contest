@@ -6,16 +6,19 @@ using UnityEngine;
 public class Block : MonoBehaviour
 {
     SpriteRenderer spriteRenderer;
+    AudioSource audioSource;
 
     public int level = 0;
     public int hp;
 
     [SerializeField] GameObject particlePrefab;
     [SerializeField] TextMeshPro hpText;
+
     // Start is called before the first frame update
     private void Awake()
     {
         spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        audioSource = GetComponent<AudioSource>();
     }
     void Start()
     {
@@ -49,6 +52,8 @@ public class Block : MonoBehaviour
         if (collision.gameObject.CompareTag("Ball"))
         {
             hp -= 1;
+            audioSource.Play();
+            
             if (hp <= 0)
             {
                 GameManager.Instance.blocks.Remove(this);

@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SettingManager : MonoBehaviour
 {
     private static SettingManager instance;
+
+    public List<AudioSource> audioSources = new List<AudioSource>();
+    
     public bool useGuideLine;
     public bool useVolume;
     public float volume;
@@ -24,6 +28,28 @@ public class SettingManager : MonoBehaviour
             useVolume = System.Convert.ToBoolean(PlayerPrefs.GetInt("useVolume"));
             volume = PlayerPrefs.GetFloat("volume");
         }
+        StartCoroutine(PeriodicClearAudioSource());
+    }
+    IEnumerator PeriodicClearAudioSource()
+    {
+        while (true)
+        {
+            ClearAudioSources();
+            yield return new WaitForSeconds(10f);
+        }
+    }
+    public void ApplyVolume()
+    {
+        ClearAudioSources();
+        for(int i = 0; i < audioSources.Count; i++)
+        {
+            audioSources[i].mute = !useVolume;
+            audioSources[i].volume = volume;
+        }
+    }
+    void ClearAudioSources()
+    {
+        audioSources = audioSources.Where(_ => _ != null).ToList();
     }
     private void OnApplicationQuit()
     {

@@ -7,10 +7,11 @@ public class Item : MonoBehaviour
 {
     [SerializeField] GameObject inactivatedBallPrefab;
     [SerializeField] GameObject particlePrefab;
+    AudioSource audioSource;
     // Start is called before the first frame update
     void Start()
     {
-        
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -45,6 +46,8 @@ public class Item : MonoBehaviour
 
             GameObject particle = Instantiate(particlePrefab);
             particle.transform.position = transform.position;
+
+            audioSource.Play();
 
             Destroy(gameObject);
         }

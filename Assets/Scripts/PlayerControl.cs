@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
-    [SerializeField] Transform guideLine; //���̵���� ������Ʈ
-    [SerializeField] Transform ballPosition; //�� ��ġ
-    [SerializeField] float angle; //�ִ�, �ּ� ����
-    [SerializeField] float ballDelay; //�� �߻� ����
+    [SerializeField] Transform guideLine; //가이드라인 오브젝트
+    [SerializeField] Transform ballPosition; //공 위치
+    [SerializeField] float angle; //최대, 최소 각도
+    [SerializeField] float ballDelay; //공 발사 간격
 
     void Update()
     {
@@ -15,7 +15,7 @@ public class PlayerControl : MonoBehaviour
     }
 
     /// <summary>
-    /// �� �߻�
+    /// 공 발사
     /// </summary>
     void ShootBalls()
     {
@@ -31,7 +31,7 @@ public class PlayerControl : MonoBehaviour
     }
 
     /// <summary>
-    /// �������� �� �߻� ����
+    /// 직접적인 공 발사 구현
     /// </summary>
     /// <returns></returns>
     IEnumerator _ShootBalls()
@@ -41,7 +41,7 @@ public class PlayerControl : MonoBehaviour
         for (int i = 0; i < GameManager.Instance.balls.Count; i++)
         {
             Ball ball = GameManager.Instance.balls[i];
-            ball.gameObject.GetComponent<Rigidbody2D>().linearVelocity = guideLine.up * ballSpeed; 
+            ball.gameObject.GetComponent<Rigidbody2D>().linearVelocity = guideLine.up * ballSpeed;
             ball.isShooted = true;
             yield return new WaitForSeconds(ballDelay);
         }
@@ -49,7 +49,7 @@ public class PlayerControl : MonoBehaviour
     }
 
     /// <summary>
-    /// �߻� ����, �� ���� ���� ǥ��
+    /// 발사 각도, 공 도착 지점 표시
     /// </summary>
     void SetGuideLine()
     {
@@ -60,25 +60,25 @@ public class PlayerControl : MonoBehaviour
         if (Camera.main.ScreenToWorldPoint(Input.mousePosition).y > 9f) { return; }
         if (GameManager.Instance.isPause) { return; }
 
-        //���콺 ��ġ ��������
+        //마우스 위치 가져오기
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
 
         Vector2 dir = (mousePos - guideLine.position).normalized;
 
-        //���͸� ������ ��ȯ
+        //벡터를 각도로 변환
         float targetAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
 
-        //������ -180 ~ 180������ ������ ǥ��
+        //각도를 -180 ~ 180까지의 값으로 표기
         if (targetAngle > 180f)
             targetAngle -= 360f;
         else if (targetAngle < -180f)
             targetAngle += 360f;
 
-        //������ -80 ~ 80������ ������ ����
+        //각도를 -80 ~ 80사이의 값으로 변경
         float clampedAngle = Mathf.Clamp(targetAngle, -angle, angle);
 
-        //���� ����
+        //각도 변경
         guideLine.rotation = Quaternion.Euler(0, 0, clampedAngle);
         guideLine.gameObject.SetActive(true);
     }

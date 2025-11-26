@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
 {
-    [SerializeField] Transform guideLine; //°¡ÀÌµå¶óÀÎ ¿ÀºêÁ§Æ®
-    [SerializeField] Transform ballPosition; //°ø À§Ä¡
-    [SerializeField] float angle; //ÃÖ´ë, ÃÖ¼Ò °¢µµ
-    [SerializeField] float ballDelay; //°ø ¹ß»ç °£°Ý
+    [SerializeField] Transform guideLine; //ï¿½ï¿½ï¿½Ìµï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
+    [SerializeField] Transform ballPosition; //ï¿½ï¿½ ï¿½ï¿½Ä¡
+    [SerializeField] float angle; //ï¿½Ö´ï¿½, ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½ï¿½
+    [SerializeField] float ballDelay; //ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½
 
     void Update()
     {
@@ -15,7 +15,7 @@ public class PlayerControl : MonoBehaviour
     }
 
     /// <summary>
-    /// °ø ¹ß»ç
+    /// ï¿½ï¿½ ï¿½ß»ï¿½
     /// </summary>
     void ShootBalls()
     {
@@ -31,17 +31,17 @@ public class PlayerControl : MonoBehaviour
     }
 
     /// <summary>
-    /// Á÷Á¢ÀûÀÎ °ø ¹ß»ç ±¸Çö
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     /// <returns></returns>
     IEnumerator _ShootBalls()
     {
         Ball.ballHitGroundExist = false;
-        float ballSpeed = SettingManager.Instance.ballSpeed; //¹ß»ç ÈÄ °ø¼Óµµ º¯°æ ¹æÁö
+        float ballSpeed = SettingManager.Instance.ballSpeed; //ï¿½ß»ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Óµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         for (int i = 0; i < GameManager.Instance.balls.Count; i++)
         {
             Ball ball = GameManager.Instance.balls[i];
-            ball.gameObject.GetComponent<Rigidbody2D>().velocity = guideLine.up * ballSpeed; 
+            ball.gameObject.GetComponent<Rigidbody2D>().linearVelocity = guideLine.up * ballSpeed; 
             ball.isShooted = true;
             yield return new WaitForSeconds(ballDelay);
         }
@@ -49,7 +49,7 @@ public class PlayerControl : MonoBehaviour
     }
 
     /// <summary>
-    /// ¹ß»ç °¢µµ, °ø µµÂø ÁöÁ¡ Ç¥½Ã
+    /// ï¿½ß»ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
     /// </summary>
     void SetGuideLine()
     {
@@ -60,25 +60,25 @@ public class PlayerControl : MonoBehaviour
         if (Camera.main.ScreenToWorldPoint(Input.mousePosition).y > 9f) { return; }
         if (GameManager.Instance.isPause) { return; }
 
-        //¸¶¿ì½º À§Ä¡ °¡Á®¿À±â
+        //ï¿½ï¿½ï¿½ì½º ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0;
 
         Vector2 dir = (mousePos - guideLine.position).normalized;
 
-        //º¤ÅÍ¸¦ °¢µµ·Î º¯È¯
+        //ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
         float targetAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
 
-        //°¢µµ¸¦ -180 ~ 180±îÁöÀÇ °ªÀ¸·Î Ç¥±â
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -180 ~ 180ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
         if (targetAngle > 180f)
             targetAngle -= 360f;
         else if (targetAngle < -180f)
             targetAngle += 360f;
 
-        //°¢µµ¸¦ -80 ~ 80»çÀÌÀÇ °ªÀ¸·Î º¯°æ
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ -80 ~ 80ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         float clampedAngle = Mathf.Clamp(targetAngle, -angle, angle);
 
-        //°¢µµ º¯°æ
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         guideLine.rotation = Quaternion.Euler(0, 0, clampedAngle);
         guideLine.gameObject.SetActive(true);
     }

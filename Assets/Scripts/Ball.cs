@@ -23,15 +23,15 @@ public class Ball : MonoBehaviour
         //상하 운동이 너무 작거나 없다면 강제로 보정
         if(isShooted && isActivated && GameManager.Instance.isStartGame)
         {
-            if (Mathf.Abs(rb.velocity.y) < 5f)
+            if (Mathf.Abs(rb.linearVelocity.y) < 5f)
             {
-                if (rb.velocity.y != 0)
+                if (rb.linearVelocity.y != 0)
                 {
-                    rb.velocity = new Vector2(rb.velocity.x, Mathf.Sign(rb.velocity.y) * 5f);
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Sign(rb.linearVelocity.y) * 5f);
                 }
                 else
                 {
-                    rb.velocity = new Vector2(rb.velocity.x, 5f);
+                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, 5f);
                 }
             }
         }
@@ -72,7 +72,7 @@ public class Ball : MonoBehaviour
                 //정지 및 위치값 보정
                 transform.position = new Vector3(transform.position.x, GameManager.Instance.ballPosition.position.y, 0);
                 isShooted = false;
-                rb.velocity = Vector2.zero;
+                rb.linearVelocity = Vector2.zero;
 
                 if (isActivated) //공이 아이템 상태가 아닌 활성화 된 상태
                 {

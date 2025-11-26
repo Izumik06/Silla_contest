@@ -26,7 +26,7 @@ public class Item : MonoBehaviour
         for (int i = 0; i < frame; i++)
         {
             transform.position += Vector3.down * (2f / frame);
-            yield return new WaitForSeconds(0.1f / frame);
+            yield return new WaitForSeconds(0.05f / frame);
         }
         //애매한 위치값 보정
         transform.position = new Vector3(transform.position.x, Mathf.Round(transform.position.y), 0);
@@ -37,12 +37,15 @@ public class Item : MonoBehaviour
         //공 또는 바닥과 충돌하였을 경우 실행
         if (collision.transform.CompareTag("Ball") || collision.transform.CompareTag("Bottom"))
         {
-            //공 생성
-            GameObject ball = Instantiate(inactivatedBallPrefab);
-            GameManager.Instance.inactivatedBalls.Add(ball.GetOrAddComponent<Ball>());
-            ball.transform.parent = GameManager.Instance.ballParent;
-            ball.transform.position = transform.position;
-            ball.GetComponent<Rigidbody2D>().AddForce(Vector2.down * SettingManager.Instance.ballSpeed, ForceMode2D.Impulse);
+            if (collision.transform.CompareTag("Ball"))
+            {
+                //공 생성
+                GameObject ball = Instantiate(inactivatedBallPrefab);
+                GameManager.Instance.inactivatedBalls.Add(ball.GetOrAddComponent<Ball>());
+                ball.transform.parent = GameManager.Instance.ballParent;
+                ball.transform.position = transform.position;
+                ball.GetComponent<Rigidbody2D>().AddForce(Vector2.down * SettingManager.Instance.ballSpeed, ForceMode2D.Impulse);
+            }
 
             //파티클 생성
             GameObject particle = Instantiate(particlePrefab);

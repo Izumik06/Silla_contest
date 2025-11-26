@@ -44,7 +44,7 @@ public class Block : MonoBehaviour
         for(int i = 0; i < frame; i++)
         {
             transform.position += Vector3.down * (2f / frame);
-            yield return new WaitForSeconds(0.1f / frame);
+            yield return new WaitForSeconds(0.05f / frame);
         }
         
         //애매한 위치값 보정

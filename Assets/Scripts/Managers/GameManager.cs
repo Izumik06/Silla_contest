@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
     public int highScore;
     public bool isPause;
     public bool isStartGame;
+    public bool isAnyBallShoot;
 
     float[] probability = { 0.5f, 0.5f, 0, 0 };
 
@@ -53,6 +54,7 @@ public class GameManager : MonoBehaviour
         {
             highScore = 0;
         }
+        Application.targetFrameRate = 60;
     }
 
     /// <summary>
@@ -108,6 +110,7 @@ public class GameManager : MonoBehaviour
             GameOver();
             return;
         }
+        isAnyBallShoot = false;
         UIManager.Instance.SetBallCountUI();
     }
 

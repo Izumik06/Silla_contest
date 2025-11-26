@@ -51,7 +51,7 @@ public class SettingManager : MonoBehaviour
     {
         volume = 1;
         useVolume = true;
-        ballSpeed = 30f;
+        ballSpeed = 40f;
         useGuideLine = true;
 
         SaveSetting();

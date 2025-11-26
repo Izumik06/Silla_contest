@@ -45,6 +45,7 @@ public class PlayerControl : MonoBehaviour
             ball.isShooted = true;
             yield return new WaitForSeconds(ballDelay);
         }
+        GameManager.Instance.isAnyBallShoot = true;
     }
 
     /// <summary>

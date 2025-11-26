@@ -86,7 +86,7 @@ public class Ball : MonoBehaviour
                         MoveForBallPosition(); // 다음 발사 위치로 이동
                     }
 
-                    if (GameManager.Instance.CanShoot) //자신이 땅에 떨어진 것으로 다음 발사 가능 == 마지막 공임
+                    if (GameManager.Instance.CanShoot && GameManager.Instance.isAnyBallShoot) //자신이 땅에 떨어진 것으로 다음 발사 가능 == 마지막 공임
                     { 
                         GameManager.Instance.Next();
                     }
